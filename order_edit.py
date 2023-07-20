@@ -37,9 +37,6 @@ API_KEY = "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJmOWI4ZGVlMzljMzVhNDY4
 #ACCOUNT_ID = "2da5bee2-1da0-4ed4-b03b-13714acc8009" #main demo
 ACCOUNT_ID = "7c348b78-2c13-4340-9875-e1d241cb0323"  #Scalping Account
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 channel_id = -1001981997793  #main
 #channel_id = -1001963686318  #trading test
 igroup = -990951103
@@ -86,18 +83,12 @@ async def my_event_handler(event):
                 initial_state = account.state
                 deployed_states = ['DEPLOYING', 'DEPLOYED']
                 if initial_state not in deployed_states:
-                        #  wait until account is deployed and connected to broker
-                    logger.info('Deploying account')
                     await account.deploy()
-        
-                logger.info('Waiting for API server to connect to broker ...')
                 await account.wait_connected()
                     # connect to MetaApi API
                 connection = account.get_rpc_connection()
                 await connection.connect()
-                logger.info('Waiting for SDK to synchronize to terminal state ...')
                 await connection.wait_synchronized()
-                
                 account_information = await connection.get_account_information()
                 ID = await connection.modify_position(ID, float(sl), float(tp1))
                 await client.send_message(igroup, "Order modified ✅")
